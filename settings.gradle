@@ -36,4 +36,6 @@ rootProject.name = "PipePipe"
 include ':app'
 include ':ffmpeg'
 
-includeBuild('../PipePipeExtractor')
+if (file('../PipePipeExtractor').exists()) {
+    includeBuild('../PipePipeExtractor')
+}
