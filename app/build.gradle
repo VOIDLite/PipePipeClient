@@ -56,16 +56,16 @@ android {
         debug {
             debuggable true
 
-            // suffix the app id and the app name with git branch name
-            def workingBranch = getGitWorkingBranch()
-            def normalizedWorkingBranch = workingBranch.replaceFirst("^[^A-Za-z]+", "").replaceAll("[^0-9A-Za-z]+", "")
-            if (true) {
-                // default values when branch name could not be determined or is master or dev
-                applicationIdSuffix ".debug"
-                resValue "string", "app_name", "PipePipe Debug"
-            } else {
+            // suffix the app id and the app name with git branch name (uses CI env when available and does not run git)
+            def workingBranch = System.getenv('GITHUB_REF')?.replaceFirst(/^refs\/heads\//, '') ?: System.getenv('GITHUB_HEAD_REF') ?: ""
+            def normalizedWorkingBranch = workingBranch ? workingBranch.replaceFirst("^[^A-Za-z]+", "").replaceAll("[^0-9A-Za-z]+", "") : ""
+
+            if (workingBranch && !(workingBranch in ['master','dev'])) {
                 applicationIdSuffix ".debug." + normalizedWorkingBranch
                 resValue "string", "app_name", "PipePipe " + workingBranch
+            } else {
+                applicationIdSuffix ".debug"
+                resValue "string", "app_name", "PipePipe Debug"
             }
         }
 
@@ -173,7 +173,7 @@ dependencies {
 
 /** NewPipe libraries **/
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
-    implementation group: 'com.github.InfinityLoop1308.PipePipeExtractor', name: 'extractor'
+    implementation group: 'com.github.InfinityLoop1308.PipePipeExtractor', name: 'extractor', version: '560e0103f8530b0d6043ab119e3da848c098afe2'
 
 /** Kotlin **/
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
@@ -288,20 +288,4 @@ dependencies {
 //    implementation 'com.arthenica:ffmpeg-kit-https:6.0-2.LTS'
     implementation project(':ffmpeg')
     implementation 'com.arthenica:smart-exception-java:0.2.1'
-}
-
-static String getGitWorkingBranch() {
-    try {
-        def gitProcess = "git rev-parse --abbrev-ref HEAD".execute()
-        gitProcess.waitFor()
-        if (gitProcess.exitValue() == 0) {
-            return gitProcess.text.trim()
-        } else {
-            // not a git repository
-            return ""
-        }
-    } catch (IOException ignored) {
-        // git was not found
-        return ""
-    }
 }
