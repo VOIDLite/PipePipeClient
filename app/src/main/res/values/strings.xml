@@ -508,7 +508,11 @@
 <string name="updates_setting_description">Show a notification to prompt app update when a new version is available</string>
 <string name="manual_update_title">Check for updates</string>
 <string name="manual_update_description">Manually check for new versions</string>
-<!-- Minimize to exit action -->
+    <!-- Dynamic Mini Player Size -->
+    <string name="dynamic_mini_player_size_title">Dynamic Mini Player Size</string>
+    <string name="dynamic_mini_player_size_summary">Automatically adjust mini player height based on video aspect ratio</string>
+
+    <!-- Minimize to exit action -->
 <string name="minimize_on_exit_title">Minimize on app switch</string>
 <string name="minimize_on_exit_summary">Action when switching to other app from main video player — %s</string>
 <string name="minimize_on_exit_none_description">None</string>

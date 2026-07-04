@@ -1638,8 +1638,7 @@ public final class Player implements
 
     /**
      * Changes the size of the popup based on the width.
-     * @param width the new width, height is calculated with
-     *              {@link PlayerHelper#getMinimumVideoHeight(float)}
+     * @param width the new width
      */
     public void changePopupSize(final int width) {
         if (DEBUG) {
@@ -1650,10 +1649,20 @@ public final class Player implements
             return;
         }
 
+        updateScreenSize();
+
         final float minimumWidth = context.getResources().getDimension(R.dimen.popup_minimum_width);
         final int actualWidth = (int) (width > screenWidth ? screenWidth
                 : (width < minimumWidth ? minimumWidth : width));
-        final int actualHeight = (int) getMinimumVideoHeight(width);
+        
+        final boolean isDynamic = getPrefs().getBoolean(context.getString(R.string.dynamic_mini_player_size_key), false);
+        final int actualHeight;
+        if (isDynamic) {
+            actualHeight = (int) (actualWidth / getAspectRatio());
+        } else {
+            actualHeight = (int) getMinimumVideoHeight(actualWidth);
+        }
+
         if (DEBUG) {
             Log.d(TAG, "updatePopupSize() updated values:"
                     + "  width = [" + actualWidth + "], height = [" + actualHeight + "]");
@@ -1661,6 +1670,9 @@ public final class Player implements
 
         popupLayoutParams.width = actualWidth;
         popupLayoutParams.height = actualHeight;
+
+        checkPopupPositionBounds();
+
         binding.surfaceView.setHeights(popupLayoutParams.height, popupLayoutParams.height);
         Objects.requireNonNull(windowManager)
                 .updateViewLayout(binding.getRoot(), popupLayoutParams);
@@ -4953,10 +4965,18 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                     + "pixelWidthHeightRatio = [" + videoSize.pixelWidthHeightRatio + "]");
         }
 
-        videoNaturalAspectRatio = ((float) videoSize.width) / videoSize.height;
+        if (videoSize.height > 0) {
+            videoNaturalAspectRatio = ((float) videoSize.width) / videoSize.height;
+        } else {
+            videoNaturalAspectRatio = 16.0f / 9.0f;
+        }
         binding.surfaceView.setAspectRatio(forcedAspectRatio > 0
                 ? forcedAspectRatio : videoNaturalAspectRatio);
         isVerticalVideo = videoSize.width < videoSize.height;
+
+        if (popupPlayerSelected() && popupLayoutParams != null) {
+            changePopupSize(popupLayoutParams.width);
+        }
 
         if (globalScreenOrientationLocked(context)
                 && isFullscreen
@@ -5389,6 +5409,15 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     @NonNull
     public SharedPreferences getPrefs() {
         return prefs;
+    }
+
+    public float getAspectRatio() {
+        if (forcedAspectRatio > 0) {
+            return forcedAspectRatio;
+        } else if (videoNaturalAspectRatio > 0 && !Float.isInfinite(videoNaturalAspectRatio) && !Float.isNaN(videoNaturalAspectRatio)) {
+            return videoNaturalAspectRatio;
+        }
+        return 16.0f / 9.0f;
     }
 
     public MediaSessionManager getMediaSessionManager() {

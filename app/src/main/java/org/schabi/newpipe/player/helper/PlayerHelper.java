@@ -642,7 +642,14 @@ public final class PlayerHelper {
                 ? player.getPrefs().getFloat(player.getContext().getString(
                 R.string.popup_saved_width_key), defaultSize)
                 : defaultSize;
-        final float popupHeight = getMinimumVideoHeight(popupWidth);
+        final boolean isDynamic = player.getPrefs().getBoolean(
+                player.getContext().getString(R.string.dynamic_mini_player_size_key), false);
+        final float popupHeight;
+        if (isDynamic) {
+            popupHeight = popupWidth / player.getAspectRatio();
+        } else {
+            popupHeight = getMinimumVideoHeight(popupWidth);
+        }
 
         final WindowManager.LayoutParams popupLayoutParams = new WindowManager.LayoutParams(
                 (int) popupWidth, (int) popupHeight,

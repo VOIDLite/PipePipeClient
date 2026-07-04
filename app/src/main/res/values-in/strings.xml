@@ -296,6 +296,8 @@
 \nAnda harus menerimanya untuk mengirimkan laporan bug kepada kami.</string>
     <string name="limit_data_usage_none_description">Tanpa batas</string>
     <string name="limit_mobile_data_usage_title">Resolusi saat menggunakan data seluler</string>
+    <string name="dynamic_mini_player_size_title">Ukuran Pemutar Mini Dinamis</string>
+    <string name="dynamic_mini_player_size_summary">Secara otomatis menyesuaikan tinggi pemutar mini berdasarkan rasio aspek video</string>
     <string name="minimize_on_exit_title">Minimalkan saat beralih apl</string>
     <string name="minimize_on_exit_summary">Tindakan ketika beralih ke apl lain dari pemutar video utama — %s</string>
     <string name="minimize_on_exit_none_description">Nihil</string>

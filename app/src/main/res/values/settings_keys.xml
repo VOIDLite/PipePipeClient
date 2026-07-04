@@ -83,6 +83,7 @@
         <item>@string/progressive_load_interval_exoplayer_default_value</item>
     </string-array>
 
+    <string name="dynamic_mini_player_size_key">dynamic_mini_player_size_key</string>
     <string name="minimize_on_exit_key">minimize_on_exit_key</string>
     <string name="minimize_on_exit_value">@string/minimize_on_exit_background_key</string>
     <string name="minimize_on_exit_none_key">minimize_on_exit_none_key</string>
